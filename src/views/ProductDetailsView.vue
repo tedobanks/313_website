@@ -1,31 +1,122 @@
 <script setup>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCategoryStore } from "@/stores/categoryProductStore";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 // Component Imports
 import Header from "@/components/Header.vue";
 
 const route = useRoute();
+const router = useRouter();
 const categoryStore = useCategoryStore();
 
 const productId = route.params.id; // Get product ID from route
 const product = ref(null); // Holds the product data
 const isLoading = ref(true); // Tracks the loading state
 const isError = ref(false); // Tracks if there was an error
+const selectedColor = ref("");
+const selectedSize = ref("");
 
-onMounted(() => {
+// Function to handle option selection
+const selectColor = (color) => {
+    selectedColor.value = color;
+};
+
+const selectSize = (size) => {
+    selectedSize.value = size;
+};
+
+const getSelectedColor = computed(() => {
+    // If no color is selected, return the first color from the product's colors array
+    return selectedColor.value || (product.value?.colors?.[0] ?? "");
+});
+const getSelectedSize = computed(() => {
+    // If no color is selected, return the first color from the product's colors array
+    return selectedSize.value || (product.value?.sizes?.[0] ?? "");
+});
+
+// const quantityInBag = computed(() => {
+//     if (product.value && getSelectedColor.value && getSelectedSize.value) {
+//         return categoryStore.getProductQuantityInBag(
+//             product.value,
+//             getSelectedColor.value,
+//             getSelectedSize.value
+//         );
+//     }
+//     return 0;
+// });
+
+const selectedProduct = computed(() => ({
+    product: product.value,
+    color: getSelectedColor.value,
+    size: getSelectedSize.value,
+}));
+
+// const goToBag = () => {
+//     const resolvedProduct = selectedProduct.value; // Extract resolved value
+//     categoryStore.addToShoppingBag(resolvedProduct); // Add to shopping bag
+// };
+
+const quantityInBag = computed(() => {
+    if (
+        product.value &&
+        product.value.id &&
+        getSelectedColor.value &&
+        getSelectedSize.value
+    ) {
+        return categoryStore.getProductQuantityInBag(
+            product.value,
+            getSelectedColor.value,
+            getSelectedSize.value
+        );
+    }
+    return 0;
+});
+
+// Add to shopping bag
+const addToBag = () => {
+    if (!getSelectedColor.value || !getSelectedSize.value) {
+        alert("Please select a color and size.");
+        return;
+    }
+    categoryStore.addToShoppingBag(
+        product.value,
+        getSelectedColor.value,
+        getSelectedSize.value
+    );
+};
+
+// Increase or decrease quantity
+const increaseQuantity = () => {
+    categoryStore.addToShoppingBag(
+        product.value,
+        getSelectedColor.value,
+        getSelectedSize.value
+    );
+};
+const decreaseQuantity = () => {
+    categoryStore.removeFromShoppingBag(
+        product.value,
+        getSelectedColor.value,
+        getSelectedSize.value
+    );
+};
+
+onMounted(async () => {
+    isLoading.value = true;
     try {
-        product.value = categoryStore.getProductById(productId); // Get the product by ID
+        if (!categoryStore.products.length) {
+            await categoryStore.fetchProducts();
+        }
+        product.value = categoryStore.getProductById(productId);
         if (!product.value) {
-            isError.value = true; // Mark error if product is not found
-            console.error("Product not found.");
+            isError.value = true;
         }
     } catch (error) {
         console.error("Error fetching product data:", error);
         isError.value = true;
     } finally {
-        isLoading.value = false; // Stop loading
+        isLoading.value = false;
     }
 });
 </script>
@@ -33,7 +124,6 @@ onMounted(() => {
 <template>
     <div class="detail-container">
         <Header />
-        <!-- Loading State -->
         <div v-if="isLoading" class="loading-overlay">
             <img
                 src="/images/313-loader.png"
@@ -41,13 +131,9 @@ onMounted(() => {
                 alt="Loading"
             />
         </div>
-
-        <!-- Error State -->
         <div v-else-if="isError" class="error-message">
             <p>Product not found. Please try again later.</p>
         </div>
-
-        <!-- Product Details -->
         <div v-else class="display-container">
             <section class="images-container">
                 <img
@@ -59,9 +145,7 @@ onMounted(() => {
             </section>
             <section class="product-info">
                 <div class="product-base-info">
-                    <p class="product-name karla-500">
-                        {{ product.name }}
-                    </p>
+                    <p class="product-name karla-500">{{ product.name }}</p>
                     <p class="product-price karla-500">₦{{ product.price }}</p>
                 </div>
                 <hr class="section-hr" />
@@ -74,6 +158,10 @@ onMounted(() => {
                             v-for="color in product.colors"
                             :key="color"
                             class="option"
+                            :class="{
+                                'option-active': getSelectedColor === color,
+                            }"
+                            @click="selectColor(color)"
                         >
                             {{ color }}
                         </div>
@@ -86,6 +174,10 @@ onMounted(() => {
                             v-for="size in product.sizes"
                             :key="size"
                             class="option"
+                            :class="{
+                                'option-active': getSelectedSize === size,
+                            }"
+                            @click="selectSize(size)"
                         >
                             {{ size }}
                         </div>
@@ -94,20 +186,58 @@ onMounted(() => {
 
                 <!-- Action Button -->
                 <div class="cta-container">
-                    <p v-if="product.quantity == 0" class="stock-quantity karla-500">
+                    <p
+                        v-if="product.quantity == 0"
+                        class="stock-quantity karla-500"
+                    >
                         Out of stock
                     </p>
-                    <p v-else-if="product.quantity <= 5" class="stock-quantity karla-500">
+                    <p
+                        v-else-if="product.quantity <= 5"
+                        class="stock-quantity karla-500"
+                    >
                         Only {{ product.quantity }} left!
                     </p>
                     <p v-else class="stock-quantity karla-500">In stock</p>
-                    <button class="add-to-bag karla-500">ADD TO BAG</button>
+
+                    <!-- Quantity Controls -->
+                    <div v-if="quantityInBag > 0" class="quantity-controls">
+                        <button
+                            @click="decreaseQuantity"
+                            class="quantity-button"
+                        >
+                            -
+                        </button>
+                        <span class="quantity-display">{{
+                            quantityInBag
+                        }}</span>
+                        <button
+                            @click="increaseQuantity"
+                            class="quantity-button"
+                        >
+                            +
+                        </button>
+                    </div>
+                    <button
+                        v-else
+                        @click="addToBag"
+                        :disabled="!getSelectedColor || !getSelectedSize"
+                        class="add-to-bag karla-500"
+                    >
+                        ADD TO BAG
+                    </button>
                 </div>
 
-                <hr class="section-hr">
+                <hr class="section-hr" />
 
+                <!-- Product descriptions -->
                 <div class="product-description-container">
-                    <p class="product-descriptions-title">Product Description</p>
+                    <p class="product-description-title karla-500">
+                        Product Description
+                    </p>
+                    <p class="product-description-text karla-500">
+                        {{ product.description }}
+                    </p>
                 </div>
             </section>
         </div>
@@ -192,7 +322,8 @@ onMounted(() => {
     padding-top: 1.25rem;
 }
 
-.option-title {
+.option-title,
+.product-description-title {
     font-size: 1.125rem;
     color: black;
     margin-bottom: 0.625rem;
@@ -201,6 +332,7 @@ onMounted(() => {
 .options-container {
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: start;
     gap: 0.625rem;
@@ -209,8 +341,19 @@ onMounted(() => {
 .option {
     padding-inline: 1.25rem;
     padding-block: 0.625rem;
-    background-color: #F5F4F4;
+    background-color: #f5f4f4;
+    color: black;
     cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.option:hover {
+    background-color: black;
+    color: white;
+}
+
+.option-active {
+    border: 2px solid black;
 }
 
 .cta-container {
@@ -241,6 +384,31 @@ onMounted(() => {
 
 .product-description-container {
     width: 100%;
+    padding-block: 1.25rem;
+}
+
+.product-description-text {
+    color: black;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.quantity-button {
+    width: 40px;
+    height: 40px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.quantity-display {
+    margin: 0 10px;
+    font-size: 1.125rem;
 }
 
 .loading-overlay {

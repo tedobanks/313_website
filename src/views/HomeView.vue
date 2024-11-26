@@ -1,34 +1,75 @@
 <script setup>
-import { onMounted, computed, ref } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoryStore } from "@/stores/categoryProductStore";
 
-const isLoading = ref(false);
+const isLoading = ref(true);
+const isError = ref(false);
 const router = useRouter();
 const categoryStore = useCategoryStore();
 
-// Check if productsByCategory is available
-const productsByCategory = computed(() => {
-  return categoryStore.productsByCategory || new Map(); // Provide a fallback Map
-});
+const productsByCategory = ref({});
 
 const openProductCategory = (id) => {
-  router.push({
-    name: "CategoryProducts",
-    params: { category: id },
-  });
+    router.push({
+        name: "CategoryProducts",
+        params: { category: id },
+    });
 };
 
-onMounted(async () => {
-  isLoading.value = true;
-  await Promise.all([categoryStore.fetchCategories(), categoryStore.fetchProducts()]);
-  isLoading.value = false;
+const loadProductsByCategory = () => {
+    if (categoryStore.productsByCategory) {
+        productsByCategory.value = categoryStore.productsByCategory;
+        console.log("Products by Category:", productsByCategory.value);
+        isError.value = false;
+    } else {
+        productsByCategory.value = {};
+        isError.value = true;
+        console.error("Products by category not available.");
+    }
+};
+
+// Computed property to get category list from the object
+const categoryList = computed(() => {
+    return Object.entries(productsByCategory.value);
 });
+
+onMounted(async () => {
+    isLoading.value = true;
+    try {
+        if (
+            !categoryStore.productsByCategory ||
+            Object.keys(categoryStore.productsByCategory).length === 0
+        ) {
+            await Promise.all([
+                categoryStore.fetchCategories(),
+                categoryStore.fetchProducts(),
+            ]);
+        }
+        loadProductsByCategory();
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        isError.value = true;
+    } finally {
+        isLoading.value = false;
+    }
+});
+
+watch(
+    () => categoryStore.productsByCategory,
+    () => {
+        loadProductsByCategory();
+    },
+    { immediate: true }
+);
 </script>
 
 <template>
     <div v-if="isLoading" class="loading-overlay">
-        <img src="/images/313-loader.png" class="logo-loader" alt="" />
+        <img src="/images/313-loader.png" class="logo-loader" alt="Loading" />
+    </div>
+    <div v-else-if="isError" class="error-message">
+        <p>Failed to load categories. Please try again later.</p>
     </div>
     <div v-else class="home-container">
         <div class="hero-section">
@@ -47,10 +88,7 @@ onMounted(async () => {
         </div>
         <div class="extras">
             <div
-                v-for="[
-                    categoryId,
-                    categoryData,
-                ] in productsByCategory.entries()"
+                v-for="[categoryId, categoryData] in categoryList"
                 :key="categoryId"
                 class="category"
                 :style="{

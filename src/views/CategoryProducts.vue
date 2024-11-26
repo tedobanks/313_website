@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import { onMounted, computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCategoryStore } from "@/stores/categoryProductStore";
@@ -44,6 +44,82 @@ onMounted(async () => {
         isLoading.value = false;
     }
 });
+</script> -->
+
+<script setup>
+import { onMounted, computed, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useCategoryStore } from "@/stores/categoryProductStore";
+
+// Component imports
+import Header from "@/components/Header.vue";
+
+const route = useRoute();
+const router = useRouter();
+const categoryId = route.params.category; // Get category ID from route
+const categoryStore = useCategoryStore();
+
+const isLoading = ref(true);
+const isError = ref(false);
+
+// Initialize selectedCategoryData as a ref
+const selectedCategoryData = ref(null);
+
+const viewProductDetails = (productId) => {
+    router.push({
+        name: "ProductDetailsView",
+        params: { category: categoryId, id: productId },
+    });
+};
+
+// Function to load category data
+const loadCategoryData = () => {
+    if (categoryStore.productsByCategory) {
+        // Use bracket notation to access the category data
+        selectedCategoryData.value =
+            categoryStore.productsByCategory[categoryId];
+        if (!selectedCategoryData.value) {
+            isError.value = true;
+            console.error("Category data not found.");
+        } else {
+            isError.value = false;
+        }
+    } else {
+        selectedCategoryData.value = null;
+    }
+};
+
+onMounted(async () => {
+    isLoading.value = true;
+    try {
+        // Check if products and categories are loaded, if not, fetch them
+        if (
+            !categoryStore.products.length ||
+            !categoryStore.categories.length
+        ) {
+            await Promise.all([
+                categoryStore.fetchCategories(),
+                categoryStore.fetchProducts(),
+            ]);
+        }
+        // Load the category data
+        loadCategoryData();
+    } catch (error) {
+        console.error("Error fetching category data:", error);
+        isError.value = true;
+    } finally {
+        isLoading.value = false;
+    }
+});
+
+// Watch for changes in productsByCategory to update selectedCategoryData
+watch(
+    () => categoryStore.productsByCategory,
+    () => {
+        loadCategoryData();
+    },
+    { immediate: true }
+);
 </script>
 
 <template>
@@ -87,7 +163,7 @@ onMounted(async () => {
                     <div class="category-product-info">
                         <p class="category-product-name">{{ product.name }}</p>
                         <p class="category-product-price">
-                            {{ product.price }}
+                            ₦{{ product.price }}
                         </p>
                     </div>
                 </div>
@@ -95,7 +171,7 @@ onMounted(async () => {
         </div>
 
         <!-- Fallback for No Data -->
-        <div v-else>
+        <div v-else class="no-data">
             <p>No data available for this category.</p>
         </div>
     </div>
@@ -142,11 +218,15 @@ onMounted(async () => {
     animation: spinning 2s linear infinite;
 }
 
-.error-message {
+.error-message,
+.no-data {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    flex-grow: 1;
+}
+
+.error-message {
     color: red;
 }
 
