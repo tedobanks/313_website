@@ -1,6 +1,8 @@
 <script setup>
 import { useRouter } from "vue-router";
+import { useCategoryStore } from "@/stores/categoryProductStore";
 
+const categoryStore = useCategoryStore();
 const router = useRouter();
 
 const goToHome = () => {
@@ -19,7 +21,7 @@ const goToShoppingBag = () => {
             <div class="placeholder-container"></div>
             <img src="/images/313-loader.png" alt="logo" class="header-logo" @click="goToHome" />
             <div class="shopping-bag" @click="goToShoppingBag">
-                <div class="product-count"></div>
+                <div v-if="categoryStore.shoppingBag.length != 0" class="product-count"></div>
             </div>
         </section>
         <hr />

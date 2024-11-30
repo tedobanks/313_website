@@ -453,7 +453,7 @@ onMounted(async () => {
         height: fit-content;
         display: flex;
         flex-direction: column;
-        overflow: scroll;
+        overflow-x: hidden;
     }
 
     .display-container {
@@ -462,20 +462,38 @@ onMounted(async () => {
     }
 
     .images-container {
-        overflow-x: scroll;
+        overflow-x: scroll !important;
+        overflow-y: hidden; /* Prevent vertical scrolling */
         scrollbar-width: none;
-        width: 100%;
-        height: 40vh;
+        width: 100%; /* Full width of the screen */
+        height: 60vh;
         display: flex;
+        white-space: nowrap; /* Prevent line breaks */
     }
 
     .images-container img {
-        width: 500px !important;
+        width: 100vw; /* Each image takes full viewport width */
+        flex-shrink: 0; /* Prevent images from shrinking */
+        object-fit: cover; /* Maintain image aspect ratio */
+        display: inline-block; /* Allow horizontal scrolling */
     }
 
     .product-info {
         height: fit-content !important;
         width: 100%;
+    }
+
+    .product-base-info {
+        flex-direction: column;
+        justify-content: start;
+    }
+
+    .product-name,
+    .product-price {
+        margin-top: 1rem;
+        font-size: 1.75rem;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 }
 </style>

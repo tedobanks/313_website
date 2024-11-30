@@ -244,6 +244,7 @@ const handlePaystackPayment = async () => {
 <template>
     <div class="cart-wrapper">
         <Header />
+        <h2 class="page-title lato-700 mobile-only">Your shopping bag</h2>
 
         <!-- Loading State -->
         <div v-if="isLoading" class="loading-overlay">
@@ -262,7 +263,9 @@ const handlePaystackPayment = async () => {
         <!-- Shopping Bag Contents -->
         <div v-else class="cart-container">
             <section class="items-container">
-                <h2 class="page-title lato-700">Your shopping bag</h2>
+                <h2 class="page-title lato-700 desktop-only">
+                    Your shopping bag
+                </h2>
                 <div class="items">
                     <div
                         v-for="(productItem, index) in products"
@@ -487,6 +490,13 @@ const handlePaystackPayment = async () => {
 </template>
 
 <style scoped>
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: flex;
+}
 .cart-wrapper {
     width: 100%;
     display: flex;
@@ -536,11 +546,7 @@ const handlePaystackPayment = async () => {
     align-items: start;
 }
 
-.product-name-wrapper {
-    width: 100%;
-    height: fit-content;
-    overflow: hidden;
-}
+
 
 .product-name,
 .product-color,
@@ -553,7 +559,6 @@ const handlePaystackPayment = async () => {
 .product-name {
     width: 100%;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
     font-size: 1.5rem;
 }
@@ -785,6 +790,16 @@ const handlePaystackPayment = async () => {
     animation: spinning 2s linear infinite;
 }
 
+.error-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: calc(100vh - 70px); /* Adjust based on your header height */
+    font-size: 18px;
+    color: red;
+}
+
 @keyframes spinning {
     0% {
         transform: rotate(0deg);
@@ -794,13 +809,137 @@ const handlePaystackPayment = async () => {
     }
 }
 
-.error-message {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: calc(100vh - 70px); /* Adjust based on your header height */
-    font-size: 18px;
-    color: red;
+@media only screen and (max-width: 768px) {
+    .mobile-only {
+        display: flex;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+
+    .cart-container {
+        flex-direction: column-reverse;
+
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        align-items: start;
+        padding-block: 2.5rem;
+    }
+
+    .items-container {
+        width: 100%;
+        padding-inline: 0.625rem;
+        margin-top: 1.5rem;
+    }
+
+    .checkout-summary-container {
+        width: 100%;
+        padding-inline: 0.625rem;
+    }
+
+    .checkout-summary-item {
+        width: 100%;
+    }
+
+    .item {
+        width: 100%;
+        height: 9.375rem;
+        background-color: #f8f8f8;
+        margin-bottom: 1.25rem;
+    }
+    
+    .item-img {
+        margin-right: 0.3125rem;
+        background-size: cover;
+    }
+    
+    .item-info {
+        height: 100%;
+        width: calc(100% - 5px - 150px);
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+  
+    }
+    
+    
+    .product-name,
+    .product-color,
+    .product-price {
+        padding-top: 0.625rem;
+    }
+    
+    .product-name {
+        font-size: 0.8125rem;
+    }
+    
+    .product-color {
+        font-size: 0.75rem;
+    }
+    
+    .product-price {
+        font-size: 0.8125rem;
+    }
+
+    .size-qty-container {
+        width: 100%;
+        display: flex;
+        padding-top: 0.625rem;
+        gap: 1.25rem;
+    }
+    
+    .sqc-item {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+    }
+    
+    .sqc-title {
+        font-size: 0.75rem;
+        color: black;
+        padding-bottom: 0.3125rem;
+    }
+    
+    .sqc-value {
+        width: 5.9375rem;
+        height: 1.25rem;
+        border: 1px solid #ece7e3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        color: black;
+        font-size: 0.8125rem;
+    }
+    
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+    }
+    
+    .quantity-button {
+        width: 20px;
+        height: 20px;
+        background-color: black;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .quantity-display {
+        margin: 0 10px;
+        font-size: 0.75rem;
+    }
+    
+    .remove-button {
+        margin-top: 5px;
+        background: none;
+        border: none;
+        color: red;
+        cursor: pointer;
+        font-size: 0.8125rem;
+    }
 }
 </style>

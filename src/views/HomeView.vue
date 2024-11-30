@@ -210,8 +210,7 @@ watch(
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    margin-block: 10px;
+    margin-block: 5px;
 }
 
 .category {
