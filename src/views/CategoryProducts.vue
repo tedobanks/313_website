@@ -235,6 +235,7 @@ watch(
     background-color: white;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     margin-block: 20px;
 }
@@ -290,6 +291,39 @@ watch(
     }
     100% {
         transform: rotate(360deg);
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .category-product {
+        height: 38vh;
+        width: 50%;
+    }
+
+    .category-product-image {
+        width: 100%;
+        height: 80%;
+        overflow: hidden;
+    }
+
+    .category-product:hover {
+        border: 2px solid black;
+    }
+
+    .category-product-info {
+        width: 100%;
+        height: 18%;
+        flex-direction: column;
+        padding-inline: 0.3125rem;
+    }
+
+    .category-product-name,
+    .category-product-price {
+        height: 50%;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 </style>

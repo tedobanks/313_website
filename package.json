@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@paystack/inline-js": "^2.22.1",
+    "axios": "^1.7.8",
     "firebase": "^11.0.2",
     "pinia": "^2.2.6",
     "pinia-plugin-persistedstate": "^4.1.3",

@@ -2,6 +2,7 @@
 import { onMounted, ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoryStore } from "@/stores/categoryProductStore";
+import Header from "@/components/Header.vue";
 
 const isLoading = ref(true);
 const isError = ref(false);
@@ -72,6 +73,7 @@ watch(
         <p>Failed to load categories. Please try again later.</p>
     </div>
     <div v-else class="home-container">
+        <Header />
         <div class="hero-section">
             <div class="overlay">
                 <div class="sticky-container">
@@ -158,6 +160,7 @@ watch(
     line-height: 1;
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Adjust values as needed */
+    user-select: none;
 }
 
 .hero-section-1,
@@ -205,6 +208,7 @@ watch(
     background-color: white;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
     margin-block: 10px;
@@ -261,6 +265,54 @@ watch(
     }
     100% {
         transform: rotate(360deg);
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .hero-section {
+        height: 260vh;
+    }
+
+    .hero-section-1,
+    .hero-section-2,
+    .hero-section-3 {
+        height: 65vh;
+        width: 100%;
+    }
+
+    .hero-section-1 {
+        background-image: url("/images/showcase-2.jpeg");
+    }
+    .hero-section-2 {
+        flex-direction: column;
+        height: fit-content;
+        filter: grayscale(0.5);
+    }
+
+    .hero-section-2:hover {
+        filter: none;
+    }
+
+    .hero-section-3 {
+        background-image: url("/images/showcase-1.jpeg");
+    }
+
+    .sub-hero-image {
+        height: 65vh;
+        width: 100%;
+    }
+
+    .sticky-text {
+        font-size: 3.75rem;
+    }
+
+    .extras {
+        gap: 0px;
+    }
+
+    .category {
+        height: 30vh;
+        width: 50%;
     }
 }
 </style>

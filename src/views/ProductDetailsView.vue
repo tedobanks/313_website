@@ -446,4 +446,36 @@ onMounted(async () => {
         transform: rotate(360deg);
     }
 }
+
+@media only screen and (max-width: 768px) {
+    .detail-container {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        flex-direction: column;
+        overflow: scroll;
+    }
+
+    .display-container {
+        height: fit-content;
+        flex-direction: column;
+    }
+
+    .images-container {
+        overflow-x: scroll;
+        scrollbar-width: none;
+        width: 100%;
+        height: 40vh;
+        display: flex;
+    }
+
+    .images-container img {
+        width: 500px !important;
+    }
+
+    .product-info {
+        height: fit-content !important;
+        width: 100%;
+    }
+}
 </style>
