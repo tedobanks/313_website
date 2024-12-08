@@ -6,6 +6,7 @@ import axios from "axios";
 
 // Component Imports
 import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
 const categoryStore = useCategoryStore();
 const products = ref([]); // Holds the product data
@@ -509,6 +510,7 @@ const handlePaystackPayment = async () => {
                 </div>
             </section>
         </div>
+        <Footer/>
     </div>
 </template>
 

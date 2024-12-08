@@ -3,6 +3,7 @@ import { onMounted, ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoryStore } from "@/stores/categoryProductStore";
 import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
 const isLoading = ref(true);
 const isError = ref(false);
@@ -102,6 +103,7 @@ watch(
                 <p class="category-name">{{ categoryData.categoryName }}</p>
             </div>
         </div>
+        <Footer />
     </div>
 </template>
 

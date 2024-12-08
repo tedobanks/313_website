@@ -5,6 +5,7 @@ import { ref, onMounted, computed } from "vue";
 
 // Component Imports
 import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -16,6 +17,10 @@ const isLoading = ref(true); // Tracks the loading state
 const isError = ref(false); // Tracks if there was an error
 const selectedColor = ref("");
 const selectedSize = ref("");
+
+const goToShoppingBag = () => {
+    router.push("/cart");
+};
 
 // Function to handle option selection
 const selectColor = (color) => {
@@ -221,6 +226,7 @@ onMounted(async () => {
                     <button
                         v-if="quantityInBag > 0"
                         class="intent-action-button go-to-bag lato-400"
+                        @click="goToShoppingBag"
                     >
                         GO TO BAG
                     </button>
@@ -247,6 +253,7 @@ onMounted(async () => {
                 </div>
             </section>
         </div>
+        <Footer />
     </div>
 </template>
 

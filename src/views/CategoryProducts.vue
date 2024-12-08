@@ -1,50 +1,3 @@
-<!-- <script setup>
-import { onMounted, computed, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useCategoryStore } from "@/stores/categoryProductStore";
-
-// Component imports
-import Header from "@/components/Header.vue";
-
-const route = useRoute();
-const router = useRouter();
-const categoryId = route.params.category; // Get category ID from route
-const categoryStore = useCategoryStore();
-
-const isLoading = ref(false);
-const isError = ref(false);
-
-// Safeguard for accessing category data
-const selectedCategoryData = computed(() => {
-    return categoryStore.productsByCategory
-        ? categoryStore.productsByCategory.get(categoryId)
-        : null;
-});
-
-const viewProductDetails = (productId) => {
-    router.push({
-        name: "ProductDetailsView",
-        params: { category: categoryId, id: productId },
-    });
-};
-
-onMounted(async () => {
-    try {
-        if (!categoryStore.productsByCategory) {
-            isLoading.value = true;
-            await Promise.all([
-                categoryStore.fetchCategories(),
-                categoryStore.fetchProducts(),
-            ]);
-        }
-    } catch (error) {
-        console.error("Error fetching category data:", error);
-        isError.value = true;
-    } finally {
-        isLoading.value = false;
-    }
-});
-</script> -->
 
 <script setup>
 import { onMounted, computed, ref, watch } from "vue";
@@ -53,6 +6,7 @@ import { useCategoryStore } from "@/stores/categoryProductStore";
 
 // Component imports
 import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -174,6 +128,8 @@ watch(
         <div v-else class="no-data">
             <p>No data available for this category.</p>
         </div>
+
+        <Footer/>
     </div>
 </template>
 

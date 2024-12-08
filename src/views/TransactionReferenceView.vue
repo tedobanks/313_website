@@ -5,6 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useCategoryStore } from "@/stores/categoryProductStore";
 import Header from "@/components/Header.vue";
 import emailjs from "@emailjs/browser";
+import Footer from "@/components/Footer.vue";
 
 const categoryStore = useCategoryStore();
 
@@ -129,8 +130,10 @@ const sendOrderConfirmation = async (order) => {
 
 // Example usage remains the same
 const handleOrderSuccess = async () => {
-    console.log("Initial emailSent state:", categoryStore.orderStatus.emailSent);
-
+    console.log(
+        "Initial emailSent state:",
+        categoryStore.orderStatus.emailSent
+    );
 
     if (categoryStore.orderStatus.emailSent) {
         console.log("Email already sent for this order");
@@ -240,9 +243,8 @@ onUnmounted(() => {
                     Return Home
                 </button>
             </div>
+            <Footer />
         </div>
-
-        <!-- <p v-if="reference">Transaction Reference: {{ reference }}</p> -->
     </div>
 </template>
 
