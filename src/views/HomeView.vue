@@ -77,7 +77,7 @@ watch(
         <div class="hero-section">
             <div class="overlay">
                 <div class="sticky-container">
-                    <p class="sticky-text">E&#x0324;LGNT</p>
+                    <p class="sticky-text"><span class="dotted-e">E</span>LGNT</p>
                 </div>
             </div>
 
@@ -154,13 +154,34 @@ watch(
     justify-content: center;
 }
 
+@font-face {
+    font-family: "Helvetica Extra Compressed";
+    src: url("/fonts/Helvetica Extra Compressed Regular.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
 .sticky-text {
-    font-family: sans-serif;
+    font-family: "Helvetica Extra Compressed", sans-serif;
     font-size: 12.5rem;
     line-height: 1;
     color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Adjust values as needed */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     user-select: none;
+}
+
+.dotted-e {
+    position: relative;
+}
+
+.dotted-e::after {
+    content: '••';
+    position: absolute;
+    bottom: -0.06em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.2em;
+    letter-spacing: normal;
 }
 
 .hero-section-1,

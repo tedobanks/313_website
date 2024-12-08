@@ -219,10 +219,16 @@ onMounted(async () => {
                         </button>
                     </div>
                     <button
+                        v-if="quantityInBag > 0"
+                        class="intent-action-button go-to-bag lato-400"
+                    >
+                        GO TO BAG
+                    </button>
+                    <button
                         v-else
                         @click="addToBag"
                         :disabled="!getSelectedColor || !getSelectedSize"
-                        class="add-to-bag karla-500"
+                        class="intent-action-button lato-400"
                     >
                         ADD TO BAG
                     </button>
@@ -369,7 +375,7 @@ onMounted(async () => {
     margin-bottom: 0.625rem;
 }
 
-.add-to-bag {
+.intent-action-button {
     width: 100%;
     height: 3.125rem;
     background-color: black;
@@ -380,6 +386,10 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     font-size: 1.125rem;
+}
+
+.go-to-bag {
+    margin-top: 1.25rem;
 }
 
 .product-description-container {
