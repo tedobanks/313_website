@@ -82,7 +82,7 @@ const checkInputValidity = () => {
             orderNumber: "ORD-" + Date.now(), // Generate order number
         });
 
-        console.log(categoryStore.deliveryDetails)
+        console.log(categoryStore.deliveryDetails);
         isInputValid.value = true;
     } else {
         isInputValid.value = false;
@@ -196,6 +196,21 @@ const total = computed(() => {
 
 const handlePaystackPayment = async () => {
     try {
+        const isSafari = /^((?!chrome|android).)*safari/i.test(
+            navigator.userAgent
+        );
+        const isIOS =
+            /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+            (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+        // Optional: Show warning for Safari users
+        if (isSafari || isIOS) {
+            const proceed = window.confirm(
+                "You will be redirected to the payment page. After payment, use the back button to return to our site. Would you like to continue?"
+            );
+            if (!proceed) return;
+        }
+
         // Step 1: Initialize transaction with Paystack API
         const response = await axios.post(
             "https://api.paystack.co/transaction/initialize",
@@ -226,12 +241,22 @@ const handlePaystackPayment = async () => {
         const callbackUrl = `http://localhost:5173/reference?reference=${reference}`;
         console.log("Callback URL:", callbackUrl); // Debugging
 
-        // Step 4: Open Paystack checkout in a new window
-        const newWindow = window.open(authorizationUrl, "_blank");
-        if (newWindow) {
-            newWindow.moveTo(0, 0);
-            newWindow.resizeTo(screen.width, screen.height);
+        if (isSafari || isIOS) {
+            window.location.href = authorizationUrl;
+        } else {
+            const newWindow = window.open(authorizationUrl, "_blank");
+            if (newWindow) {
+                newWindow.moveTo(0, 0);
+                newWindow.resizeTo(screen.width, screen.height);
+            }
         }
+
+        // // Step 4: Open Paystack checkout in a new window
+        // const newWindow = window.open(authorizationUrl, "_blank");
+        // if (newWindow) {
+        //     newWindow.moveTo(0, 0);
+        //     newWindow.resizeTo(screen.width, screen.height);
+        // }
     } catch (error) {
         console.error("Payment initialization failed", error);
         // Handle error (show message to user, etc.)
