@@ -71,6 +71,18 @@ const checkInputValidity = () => {
     )?.price;
 
     if (nameValid && emailValid && phoneValid && addressValid && areaValid) {
+        categoryStore.setDeliveryDetails({
+            recipientName: recipientName.value,
+            recipientEmail: recipientEmail.value,
+            recipientPhone: recipientPhone.value,
+            recipientAddress: recipientAddress.value,
+            recipientArea: recipientArea.value,
+            deliveryFee: deliveryFee.value,
+            orderTotal: total.value,
+            orderNumber: "ORD-" + Date.now(), // Generate order number
+        });
+
+        console.log(categoryStore.deliveryDetails)
         isInputValid.value = true;
     } else {
         isInputValid.value = false;
@@ -182,36 +194,17 @@ const total = computed(() => {
     return subtotal.value + deliveryFee.value;
 });
 
-// const handlePaystackPayment = () => {
-//   const paystack = PaystackPop.setup({
-//     key: 'pk_test_584437b999dd595a80e5d4e27d738a78a38a4483', // Your Paystack public key
-//     email: "customer@example.com", // Customer's email
-//     amount: total.value * 100, // Amount in kobo
-//     currency: 'NGN',
-//     ref: `ref-${Math.floor(Math.random() * 1000000)}`, // Unique reference
-//     callback: (response) => {
-//       // Handle successful payment
-//       console.log('Payment successful', response);
-//       alert(`Payment completed! Reference: ${response.reference}`);
-//       // You can add additional logic here like updating order status
-//     },
-//     onClose: () => {
-//       alert('Transaction was cancelled');
-//     }
-//   });
-
-//   paystack.openIframe();
-// };
-
 const handlePaystackPayment = async () => {
     try {
-        // Initialize transaction with Paystack API
+        // Step 1: Initialize transaction with Paystack API
         const response = await axios.post(
             "https://api.paystack.co/transaction/initialize",
             {
                 amount: total.value * 100, // Amount in kobo
-                email: "customer@email.com", // Customer's email
-                callback_url: "http://localhost:5173/cart", // Optional return URL
+                email: recipientEmail.value, // Customer's email
+                callback_url: `http://localhost:5174/reference`, // Temporary URL; append the reference after initialization
+                subaccount: "ACCT_fd13om1i3eyx63i", // Replace with your subaccount code
+                bearer: "account", // Indicates that the subaccount bears the transaction fees
             },
             {
                 headers: {
@@ -223,12 +216,17 @@ const handlePaystackPayment = async () => {
             }
         );
 
-        // Get the authorization URL from Paystack response
-        const authorizationUrl = response.data.data.authorization_url;
+        // Step 2: Extract the reference and authorization URL from the response
+        const { reference, authorization_url: authorizationUrl } =
+            response.data.data;
 
-        // Open Paystack checkout in a new window
-        // window.open(authorizationUrl, '_blank', 'width=screen.width,height=screen.height');
+        console.log("Transaction Reference:", reference); // Debugging
 
+        // Step 3: Update the callback URL dynamically if needed
+        const callbackUrl = `http://localhost:5173/reference?reference=${reference}`;
+        console.log("Callback URL:", callbackUrl); // Debugging
+
+        // Step 4: Open Paystack checkout in a new window
         const newWindow = window.open(authorizationUrl, "_blank");
         if (newWindow) {
             newWindow.moveTo(0, 0);
@@ -399,7 +397,7 @@ const handlePaystackPayment = async () => {
                                     v-model="recipientArea"
                                 >
                                     <option value="" disabled selected>
-                                        Select a Category
+                                        Select an area
                                     </option>
                                     <option
                                         v-for="area in lagosAreasDeliveryPrices"
@@ -545,8 +543,6 @@ const handlePaystackPayment = async () => {
     flex-direction: column;
     align-items: start;
 }
-
-
 
 .product-name,
 .product-color,
@@ -794,6 +790,7 @@ const handlePaystackPayment = async () => {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
     width: 100%;
     height: calc(100vh - 70px); /* Adjust based on your header height */
     font-size: 18px;
@@ -825,7 +822,8 @@ const handlePaystackPayment = async () => {
         height: fit-content;
         display: flex;
         align-items: start;
-        padding-block: 2.5rem;
+        padding-top: 0rem;
+        padding-bottom: 2.5rem;
     }
 
     .items-container {
@@ -849,36 +847,39 @@ const handlePaystackPayment = async () => {
         background-color: #f8f8f8;
         margin-bottom: 1.25rem;
     }
-    
+
     .item-img {
         margin-right: 0.3125rem;
         background-size: cover;
     }
-    
+
     .item-info {
         height: 100%;
         width: calc(100% - 5px - 150px);
         display: flex;
         flex-direction: column;
         align-items: start;
-  
     }
-    
-    
+
+    .page-title {
+        margin-left: 0.625rem;
+        margin-top: 2.5rem;
+    }
+
     .product-name,
     .product-color,
     .product-price {
         padding-top: 0.625rem;
     }
-    
+
     .product-name {
         font-size: 0.8125rem;
     }
-    
+
     .product-color {
         font-size: 0.75rem;
     }
-    
+
     .product-price {
         font-size: 0.8125rem;
     }
@@ -889,56 +890,29 @@ const handlePaystackPayment = async () => {
         padding-top: 0.625rem;
         gap: 1.25rem;
     }
-    
-    .sqc-item {
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-    }
-    
+
     .sqc-title {
         font-size: 0.75rem;
-        color: black;
         padding-bottom: 0.3125rem;
     }
-    
+
     .sqc-value {
         width: 5.9375rem;
         height: 1.25rem;
-        border: 1px solid #ece7e3;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: transparent;
-        color: black;
         font-size: 0.8125rem;
     }
-    
-    .quantity-controls {
-        display: flex;
-        align-items: center;
-    }
-    
+
     .quantity-button {
         width: 20px;
         height: 20px;
-        background-color: black;
-        color: white;
-        border: none;
-        cursor: pointer;
     }
-    
+
     .quantity-display {
-        margin: 0 10px;
         font-size: 0.75rem;
     }
-    
+
     .remove-button {
         margin-top: 5px;
-        background: none;
-        border: none;
-        color: red;
-        cursor: pointer;
         font-size: 0.8125rem;
     }
 }

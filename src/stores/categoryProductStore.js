@@ -7,6 +7,20 @@ export const useCategoryStore = defineStore("categoryProductStore", {
         categories: [], // Array of categories
         products: [], // Array of products
         shoppingBag: [],
+        deliveryDetails: {
+            recipientName: '',
+            recipientEmail: '',
+            recipientPhone: '',
+            recipientAddress: '',
+            recipientArea: '',
+            deliveryFee: 0,
+            orderTotal: 0,
+            orderNumber: ''
+        },
+        orderStatus: {
+            emailSent: false,
+            paymentConfirmed: false
+        }
     }),
     actions: {
         async fetchCategories() {
@@ -170,6 +184,32 @@ export const useCategoryStore = defineStore("categoryProductStore", {
             });
             return existingItem ? existingItem.quantity : 0;
         },
+
+        clearShoppingBag() {
+            this.shoppingBag = [];
+            console.log('Shopping bag cleared:', this.shoppingBag);
+        },
+
+        setDeliveryDetails(details) {
+            this.deliveryDetails = {
+                ...this.deliveryDetails,
+                ...details
+            };
+        },
+
+        setOrderEmailStatus(status) {
+            this.orderStatus = {
+                emailSent: status,
+                paymentConfirmed: true
+            };
+        },
+
+        clearOrderStatus() {
+            this.orderStatus = {
+                emailSent: false,
+                paymentConfirmed: false
+            };
+        }
 
     },
     persist: {
