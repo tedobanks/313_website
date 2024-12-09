@@ -78,7 +78,9 @@ watch(
         <div class="hero-section">
             <div class="overlay">
                 <div class="sticky-container">
-                    <p class="sticky-text"><span class="dotted-e">E</span>LGNT</p>
+                    <p class="sticky-text" style="letter-spacing: 7.5rem">
+                        <span class="dotted-e">E</span>LGN<span class="last-letter">T</span>
+                    </p>
                 </div>
             </div>
 
@@ -163,6 +165,10 @@ watch(
     font-style: normal;
 }
 
+.last-letter {
+    letter-spacing: 0;
+}
+
 .sticky-text {
     font-family: "Helvetica Extra Compressed", sans-serif;
     font-size: 12.5rem;
@@ -174,16 +180,17 @@ watch(
 
 .dotted-e {
     position: relative;
+    display: inline-block;
 }
 
 .dotted-e::after {
-    content: '••';
+    content: "••";
     position: absolute;
     bottom: -0.06em;
-    left: 50%;
+    left: 20%;
     transform: translateX(-50%);
     font-size: 0.2em;
-    letter-spacing: normal;
+    letter-spacing: 0;
 }
 
 .hero-section-1,
@@ -326,6 +333,7 @@ watch(
 
     .sticky-text {
         font-size: 3.75rem;
+        letter-spacing: 2.5rem !important;
     }
 
     .extras {
