@@ -96,7 +96,7 @@ watch(
         </div>
 
         <!-- Data Display -->
-        <div v-else-if="selectedCategoryData">
+        <div class="products-container-display" v-else-if="selectedCategoryData">
             <section class="category-info">
                 <h2 class="category-name">
                     {{ selectedCategoryData.categoryName }}
@@ -140,6 +140,11 @@ watch(
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+.products-container-display {
+    width: 100%;
+    min-height: 100vh;
 }
 
 .category-info {

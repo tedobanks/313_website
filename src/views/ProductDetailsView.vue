@@ -40,27 +40,22 @@ const getSelectedSize = computed(() => {
     return selectedSize.value || (product.value?.sizes?.[0] ?? "");
 });
 
-// const quantityInBag = computed(() => {
-//     if (product.value && getSelectedColor.value && getSelectedSize.value) {
-//         return categoryStore.getProductQuantityInBag(
-//             product.value,
-//             getSelectedColor.value,
-//             getSelectedSize.value
-//         );
-//     }
-//     return 0;
-// });
+const formattedDescription = computed(() => {
+    if (!product.value?.description) return '';
+    // Replace the encoded line breaks with actual line breaks
+    const description = product.value.description.replace(/\\n/g, '\n');
+    // Split by line breaks and add bullet points
+    return description.split('\n')
+        .filter(line => line.trim())
+        .map(line => `${line.trim()}`)
+        .join('\n');
+});
 
 const selectedProduct = computed(() => ({
     product: product.value,
     color: getSelectedColor.value,
     size: getSelectedSize.value,
 }));
-
-// const goToBag = () => {
-//     const resolvedProduct = selectedProduct.value; // Extract resolved value
-//     categoryStore.addToShoppingBag(resolvedProduct); // Add to shopping bag
-// };
 
 const quantityInBag = computed(() => {
     if (
@@ -248,7 +243,7 @@ onMounted(async () => {
                         Product Description
                     </p>
                     <p class="product-description-text karla-500">
-                        {{ product.description }}
+                        {{ formattedDescription }}
                     </p>
                 </div>
             </section>
@@ -406,6 +401,7 @@ onMounted(async () => {
 
 .product-description-text {
     color: black;
+    white-space: pre-line;
 }
 
 .quantity-controls {
