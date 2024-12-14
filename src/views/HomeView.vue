@@ -39,6 +39,7 @@ const categoryList = computed(() => {
 onMounted(async () => {
     isLoading.value = true;
     try {
+        await categoryStore.refreshData();
         if (
             !categoryStore.productsByCategory ||
             Object.keys(categoryStore.productsByCategory).length === 0
@@ -79,7 +80,10 @@ watch(
             <div class="overlay">
                 <div class="sticky-container">
                     <p class="sticky-text" style="letter-spacing: 7.5rem">
-                        <span class="dotted-e">E</span>LGN<span class="last-letter">T</span>
+                        <span class="dotted-e">E</span>LGN<span
+                            class="last-letter"
+                            >T</span
+                        >
                     </p>
                 </div>
             </div>

@@ -46,6 +46,7 @@ const loadCategoryData = () => {
 onMounted(async () => {
     isLoading.value = true;
     try {
+        await categoryStore.refreshData();
         // Check if products and categories are loaded, if not, fetch them
         if (
             !categoryStore.products.length ||

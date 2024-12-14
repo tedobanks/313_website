@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { getAllCategoriesFromFirestore, getAllProductsFromFirestore } from "@/firebase/firebaseConfig";
 
+const DATA_REFRESH_INTERVAL = 1000 * 60 * 5; // 5 minutes, adjust as needed
+
 export const useCategoryStore = defineStore("categoryProductStore", {
     state: () => ({
         productsByCategory: {}, // Map of categories and their products
@@ -20,9 +22,15 @@ export const useCategoryStore = defineStore("categoryProductStore", {
         orderStatus: {
             emailSent: false,
             paymentConfirmed: false
-        }
+        },
+        lastFetchTime: null,
     }),
     actions: {
+        needsRefresh() {
+            if (!this.lastFetchTime) return true;
+            const now = Date.now();
+            return now - this.lastFetchTime > DATA_REFRESH_INTERVAL;
+        },
         async fetchCategories() {
             try {
                 const categories = await getAllCategoriesFromFirestore();
@@ -209,6 +217,16 @@ export const useCategoryStore = defineStore("categoryProductStore", {
                 emailSent: false,
                 paymentConfirmed: false
             };
+        },
+
+        // New method to fetch fresh data
+        async refreshData() {
+            if (this.needsRefresh()) {
+                await Promise.all([
+                    this.fetchCategories(),
+                    this.fetchProducts()
+                ]);
+            }
         }
 
     },
