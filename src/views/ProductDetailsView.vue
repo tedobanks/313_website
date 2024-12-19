@@ -41,14 +41,15 @@ const getSelectedSize = computed(() => {
 });
 
 const formattedDescription = computed(() => {
-    if (!product.value?.description) return '';
+    if (!product.value?.description) return "";
     // Replace the encoded line breaks with actual line breaks
-    const description = product.value.description.replace(/\\n/g, '\n');
+    const description = product.value.description.replace(/\\n/g, "\n");
     // Split by line breaks and add bullet points
-    return description.split('\n')
-        .filter(line => line.trim())
-        .map(line => `${line.trim()}`)
-        .join('\n');
+    return description
+        .split("\n")
+        .filter((line) => line.trim())
+        .map((line) => `${line.trim()}`)
+        .join("\n");
 });
 
 const selectedProduct = computed(() => ({
@@ -145,8 +146,14 @@ onMounted(async () => {
             </section>
             <section class="product-info">
                 <div class="product-base-info">
-                    <p class="product-name karla-500">{{ product.name }}</p>
-                    <p class="product-price karla-500">₦{{ product.price }}</p>
+                    <div class="product-name-container">
+                        <p class="product-name karla-500">{{ product.name }}</p>
+                    </div>
+                    <div class="product-price-container">
+                        <p class="product-price karla-500">
+                            ₦{{ product.price }}
+                        </p>
+                    </div>
                 </div>
                 <hr class="section-hr" />
 
@@ -308,6 +315,7 @@ onMounted(async () => {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
+    gap: 1.25rem;
 }
 
 .product-name,
@@ -499,6 +507,7 @@ onMounted(async () => {
     .product-base-info {
         flex-direction: column;
         justify-content: start;
+        gap: 0;
     }
 
     .product-name,
