@@ -195,6 +195,26 @@ const total = computed(() => {
     return subtotal.value + deliveryFee.value;
 });
 
+const mainAccountAmount = computed(() => {
+    // First calculate base amount (product prices minus maintenance fees)
+    const baseAmount = products.value.reduce((accumulator, item) => {
+        const priceStr = item.product?.price || "0";
+        const price = parseFloat(priceStr.replace(/,/g, "")) || 0;
+        const quantity = parseInt(item.quantity, 10) || 0;
+
+        if (!price || !quantity) {
+            return accumulator;
+        }
+
+        // For each item, subtract 2000 maintenance fee
+        const amountForMainAccount = (price - 2000) * quantity;
+        return accumulator + amountForMainAccount;
+    }, 0);
+
+    // Add delivery fee to the main account amount
+    return baseAmount + deliveryFee.value;
+});
+
 const handlePaystackPayment = async () => {
     try {
         const isSafari = /^((?!chrome|android).)*safari/i.test(
@@ -219,13 +239,14 @@ const handlePaystackPayment = async () => {
                 amount: total.value * 100, // Amount in kobo
                 email: recipientEmail.value, // Customer's email
                 callback_url: `https://www.313eleganto.online/reference`,
-                subaccount: import.meta.env.VITE_PAYSTACK_SUB_ACCOUNT, // Replace with your subaccount code
+                subaccount: import.meta.env.VITE_PAYSTACK_TEST_SUB_ACCOUNT, // Replace with your subaccount code
+                transaction_charge: mainAccountAmount.value * 100,
                 bearer: "account", // Indicates that the subaccount bears the transaction fees
             },
             {
                 headers: {
                     Authorization: `Bearer ${
-                        import.meta.env.VITE_PAYSTACK_SECRET_KEY
+                        import.meta.env.VITE_PAYSTACK_TEST_SECRET_KEY
                     }`, // Your Paystack secret key
                     "Content-Type": "application/json",
                 },
@@ -510,7 +531,7 @@ const handlePaystackPayment = async () => {
                 </div>
             </section>
         </div>
-        <Footer/>
+        <Footer />
     </div>
 </template>
 
@@ -524,13 +545,14 @@ const handlePaystackPayment = async () => {
 }
 .cart-wrapper {
     width: 100%;
+    min-block-size: 100vh;
     display: flex;
     flex-direction: column;
 }
 
 .cart-container {
     width: 100%;
-    height: fit-content;
+    min-block-size: 100vh;
     display: flex;
     align-items: start;
     padding-block: 2.5rem;
