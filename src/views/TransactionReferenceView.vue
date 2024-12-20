@@ -170,7 +170,7 @@ const verifyTransaction = async (reference) => {
             {
                 headers: {
                     Authorization: `Bearer ${
-                        import.meta.env.VITE_PAYSTACK_SECRET_KEY
+                        import.meta.env.VITE_PAYSTACK_TEST_SECRET_KEY
                     }`,
                 },
             }
