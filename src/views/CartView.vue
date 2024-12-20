@@ -239,14 +239,14 @@ const handlePaystackPayment = async () => {
                 amount: total.value * 100, // Amount in kobo
                 email: recipientEmail.value, // Customer's email
                 callback_url: `https://www.313eleganto.online/reference`,
-                subaccount: import.meta.env.VITE_PAYSTACK_TEST_SUB_ACCOUNT, // Replace with your subaccount code
+                subaccount: import.meta.env.VITE_PAYSTACK_SUB_ACCOUNT, // Replace with your subaccount code
                 transaction_charge: mainAccountAmount.value * 100,
                 bearer: "account", // Indicates that the subaccount bears the transaction fees
             },
             {
                 headers: {
                     Authorization: `Bearer ${
-                        import.meta.env.VITE_PAYSTACK_TEST_SECRET_KEY
+                        import.meta.env.VITE_PAYSTACK_SECRET_KEY
                     }`, // Your Paystack secret key
                     "Content-Type": "application/json",
                 },
