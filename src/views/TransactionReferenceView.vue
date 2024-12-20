@@ -186,6 +186,19 @@ const verifyTransaction = async (reference) => {
             }
             isLoading.value = false;
             console.log("Payment Details:", response.data.data);
+
+            console.log("Starting timeout");
+            await new Promise((resolve) => {
+                console.log("Inside timeout promise");
+                setTimeout(() => {
+                    console.log("Timeout completed");
+                    resolve();
+                }, 3000);
+            });
+
+            console.log("navigation time");
+            await router.push("/");
+            console.log("Navigation completed");
         } else {
             transactionStatus.value = "Payment Failed!";
             console.error("Payment not successful:", response.data.data);
