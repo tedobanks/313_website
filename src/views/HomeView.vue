@@ -22,7 +22,6 @@ const openProductCategory = (id) => {
 const loadProductsByCategory = () => {
     if (categoryStore.productsByCategory) {
         productsByCategory.value = categoryStore.productsByCategory;
-        console.log("Products by Category:", productsByCategory.value);
         isError.value = false;
     } else {
         productsByCategory.value = {};
@@ -51,7 +50,7 @@ onMounted(async () => {
         }
         loadProductsByCategory();
     } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data:");
         isError.value = true;
     } finally {
         isLoading.value = false;

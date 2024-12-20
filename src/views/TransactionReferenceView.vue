@@ -57,10 +57,8 @@ const sendMerchantConfirmation = async (order) => {
             templateParams,
             import.meta.env.VITE_EMAILJS_MERCHANT_PUBLIC_KEY
         );
-
-        console.log("Order confirmation email sent successfully!");
     } catch (error) {
-        console.error("Failed to send order confirmation:", error);
+        console.error("Failed to send order confirmation:");
     }
 };
 
@@ -93,10 +91,8 @@ const sendVendorNotification = async (order) => {
             templateParams,
             import.meta.env.VITE_EMAILJS_MERCHANT_PUBLIC_KEY
         );
-
-        console.log("Vendor notification sent successfully!");
     } catch (error) {
-        console.error("Failed to send vendor notification:", error);
+        console.error("Failed to send vendor notification:");
     }
 };
 
@@ -121,22 +117,14 @@ const sendOrderConfirmation = async (order) => {
             templateParams,
             import.meta.env.VITE_EMAILJS_PUBLIC_KEY
         );
-
-        console.log("Order confirmation email sent successfully!");
     } catch (error) {
-        console.error("Failed to send order confirmation:", error);
+        console.error("Failed to send order confirmation:");
     }
 };
 
 // Example usage remains the same
 const handleOrderSuccess = async () => {
-    console.log(
-        "Initial emailSent state:",
-        categoryStore.orderStatus.emailSent
-    );
-
     if (categoryStore.orderStatus.emailSent) {
-        console.log("Email already sent for this order");
         return;
     }
 
@@ -159,7 +147,7 @@ const handleOrderSuccess = async () => {
         // Mark email as sent in store
         categoryStore.setOrderEmailStatus(true);
     } catch (error) {
-        console.error("Failed to process order:", error);
+        console.error("Failed to process order:");
     }
 };
 
@@ -185,34 +173,26 @@ const verifyTransaction = async (reference) => {
                 categoryStore.clearShoppingBag();
             }
             isLoading.value = false;
-            console.log("Payment Details:", response.data.data);
 
-            console.log("Starting timeout");
             await new Promise((resolve) => {
-                console.log("Inside timeout promise");
                 setTimeout(() => {
-                    console.log("Timeout completed");
                     resolve();
                 }, 3000);
             });
 
-            console.log("navigation time");
             await router.push("/");
-            console.log("Navigation completed");
         } else {
             transactionStatus.value = "Payment Failed!";
-            console.error("Payment not successful:", response.data.data);
+            console.error("Payment not successful:");
         }
     } catch (error) {
         transactionStatus.value = "Error verifying transaction!";
         errorMessage.value = error.message;
-        console.error("Transaction verification failed", error);
+        console.error("Transaction verification failed");
     }
 };
 
 onMounted(() => {
-    console.log(deliveryDetails.value);
-
     const reference = route.query.reference;
 
     if (reference) {

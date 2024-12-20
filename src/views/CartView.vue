@@ -83,7 +83,7 @@ const checkInputValidity = () => {
             orderNumber: "ORD-" + Date.now(), // Generate order number
         });
 
-        console.log(categoryStore.deliveryDetails);
+        
         isInputValid.value = true;
     } else {
         isInputValid.value = false;
@@ -125,7 +125,7 @@ onMounted(() => {
     try {
         loadProducts();
     } catch (error) {
-        console.error("Error fetching product data:", error);
+        console.error("Error fetching product data:");
         isError.value = true;
     } finally {
         isLoading.value = false; // Stop loading
@@ -257,11 +257,11 @@ const handlePaystackPayment = async () => {
         const { reference, authorization_url: authorizationUrl } =
             response.data.data;
 
-        console.log("Transaction Reference:", reference); // Debugging
+        
 
         // Step 3: Update the callback URL dynamically if needed
-        const callbackUrl = `http://localhost:5173/reference?reference=${reference}`;
-        console.log("Callback URL:", callbackUrl); // Debugging
+        const callbackUrl = `http://313eleganto.online/reference?reference=${reference}`;
+        
 
         if (isSafari || isIOS) {
             window.location.href = authorizationUrl;
@@ -280,7 +280,7 @@ const handlePaystackPayment = async () => {
         //     newWindow.resizeTo(screen.width, screen.height);
         // }
     } catch (error) {
-        console.error("Payment initialization failed", error);
+        console.error("Payment initialization failed");
         // Handle error (show message to user, etc.)
     }
 };

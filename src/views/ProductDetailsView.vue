@@ -114,7 +114,7 @@ onMounted(async () => {
             isError.value = true;
         }
     } catch (error) {
-        console.error("Error fetching product data:", error);
+        console.error("Error fetching product data:");
         isError.value = true;
     } finally {
         isLoading.value = false;

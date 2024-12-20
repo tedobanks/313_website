@@ -60,7 +60,7 @@ onMounted(async () => {
         // Load the category data
         loadCategoryData();
     } catch (error) {
-        console.error("Error fetching category data:", error);
+        console.error("Error fetching category data:");
         isError.value = true;
     } finally {
         isLoading.value = false;

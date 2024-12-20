@@ -37,7 +37,7 @@ export const useCategoryStore = defineStore("categoryProductStore", {
                 this.categories = categories;
                 this.updateProductsByCategory();
             } catch (error) {
-                console.error("Error fetching categories:", error);
+                console.error("Error fetching categories:");
             }
         },
         async fetchProducts() {
@@ -46,7 +46,7 @@ export const useCategoryStore = defineStore("categoryProductStore", {
                 this.products = products;
                 this.updateProductsByCategory();
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("Error fetching products:");
             }
         },
         updateProductsByCategory() {
@@ -126,7 +126,7 @@ export const useCategoryStore = defineStore("categoryProductStore", {
                     quantity: quantity,
                 });
             }
-            console.log('Shopping bag has:', this.shoppingBag);
+            
         },
 
 
@@ -195,7 +195,7 @@ export const useCategoryStore = defineStore("categoryProductStore", {
 
         clearShoppingBag() {
             this.shoppingBag = [];
-            console.log('Shopping bag cleared:', this.shoppingBag);
+            
         },
 
         setDeliveryDetails(details) {
