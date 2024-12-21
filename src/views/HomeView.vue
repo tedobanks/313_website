@@ -347,5 +347,15 @@ watch(
         height: 30vh;
         width: 50%;
     }
+
+    .dotted-e::after {
+        content: "••";
+        position: absolute;
+        bottom: -0.3em;
+        left: 17%;
+        transform: translateX(-50%);
+        font-size: 0.2em;
+        letter-spacing: 0;
+    }
 }
 </style>
